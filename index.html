@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title .icon {
+            font-size: 24px;
+        }
+
+        .paste-area {
+            width: 100%;
+            min-height: 120px;
+            padding: 16px;
+            border: 3px dashed #cbd5e1;
+            border-radius: 12px;
+            font-size: 14px;
+            resize: vertical;
+            transition: all 0.3s;
+            background: #f8fafc;
+            font-family: monospace;
+        }
+
+        .paste-area:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+        }
+
+        .paste-hint {
+            margin-top: 10px;
+            padding: 12px;
+            background: #eff6ff;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #1e40af;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 18px;
+        }
+
+        .field-group {
+            position: relative;
+        }
+
+        .field-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .field-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+
+        .field-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .field-group input.filled {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+
+        /* Birthday 3-input style */
+        .birthday {
+            display: flex;
+            gap: 8px;
+        }
+
+        .birthday input {
+            flex: 1;
+            text-align: center;
+            padding: 12px 8px;
+            min-width: 0;
+        }
+
+        .birthday input#month {
+            flex: 1.2;
+        }
+
+        .birthday input#day {
+            flex: 1;
+        }
+
+        .birthday input#year {
+            flex: 1.5;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 10px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+        }
+
+        .status.show {
+            display: flex;
+        }
+
+        .status-success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        .status-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+
+        .chrome-hint {
+            margin-top: 20px;
+            padding: 16px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 10px;
+            border: 1px solid #f59e0b;
+            color: #92400e;
+            font-size: 14px;
+        }
+
+        .chrome-hint strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .chrome-hint ol {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-top: 15px;
+        }
+
+        .preview-table th {
+            background: #1e3c72;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .preview-table td {
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .preview-table tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .sample-data {
+            background: #f0f9ff;
+            border: 1px dashed #0ea5e9;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #0369a1;
+            cursor: pointer;
+        }
+
+        .sample-data:hover {
+            background: #e0f2fe;
+        }
+
+        .sample-data-label {
+            font-size: 11px;
+            color: #64748b;
+            margin-bottom: 4px;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- STEP 1: Paste Data -->
+        <div class="card">
+            <div class="card-title">
+                <span class="icon">📥</span>
+                Bước 1: Paste Data từ Excel/Sheets
+            </div>
+            <textarea 
+                id="pasteArea" 
+                class="paste-area" 
+                placeholder="Copy dòng data từ Excel và paste vào đây..."
+            ></textarea>
+
+            <div class="sample-data" onclick="fillSample()">
+                <div class="sample-data-label">👆 Click để dùng data mẫu (hoặc copy paste từ Excel):</div>
+                 rgarcia41815@gmail.com    2109009290    rossanna    valdez    25/03/1979    78240    6400 Wurzbach    San Antonio    TX
+            </div>
+
+            <div class="paste-hint">
+                💡 <strong>Format:</strong> email | phone | first_name | last_name | dob | zip+home | address | city | state<br>
+                Có thể dùng <code>Tab</code>, <code>Comma</code>, hoặc <code>Space</code> để phân cách
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="clearAll()">🗑️ Xóa</button>
+                <button class="btn btn-primary" onclick="parseData()">✨ Tự Động Điền</button>
+            </div>
+        </div>
+
+        <!-- Preview -->
+        <div class="card" id="previewCard" style="display:none;">
+            <div class="card-title">
+                <span class="icon">👁️</span>
+                Preview Data
+            </div>
+            <div style="overflow-x:auto;">
+                <table class="preview-table">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>First</th>
+                            <th>Last</th>
+                            <th>DOB</th>
+                            <th>ZIP</th>
+                            <th>Address</th>
+                            <th>City</th>
+                            <th>State</th>
+                        </tr>
+                    </thead>
+                    <tbody id="previewBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- STEP 2: Form Fields -->
+        <div class="card">
+            <div class="card-title">
+                <span class="icon">📝</span>
+                Form Fields (Chrome Autofill Ready)
+            </div>
+
+            <form id="mainForm" action="save-profile" method="POST" autocomplete="on">
+                <div class="form-grid">
+                    <div class="field-group">
+                        <label>📧 Email</label>
+                        <input type="email" id="email" name="email" autocomplete="email" placeholder="email@example.com">
+                    </div>
+
+                    <div class="field-group">
+                        <label>📱 Cell Phone</label>
+                        <input type="tel" id="cell_phone" name="cell_phone" autocomplete="tel" placeholder="2109009290">
+                    </div>
+
+                    <div class="field-group">
+                        <label>👤 First Name</label>
+                        <input type="text" id="first_name" name="first_name" autocomplete="given-name" placeholder="Rossanna">
+                    </div>
+
+                    <div class="field-group">
+                        <label>👤 Last Name</label>
+                        <input type="text" id="last_name" name="last_name" autocomplete="family-name" placeholder="Valdez">
+                    </div>
+
+                    <!-- DOB split into 3 inputs -->
+                    <div class="field-group">
+                        <label>🎂 Date of Birth</label>
+                        <div class="birthday" id="dob">
+                            <input type="text" id="month" name="month" autocomplete="bday-month" placeholder="MM" maxlength="2">
+                            <input type="text" id="day" name="day" autocomplete="bday-day" placeholder="DD" maxlength="2">
+                            <input type="text" id="year" name="year" autocomplete="bday-year" placeholder="YYYY" maxlength="4">
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label>📮 ZIP Code</label>
+                        <input type="text" id="zip" name="zip" autocomplete="postal-code" placeholder="78240">
+                    </div>
+
+                    <div class="field-group">
+                        <label>🏠 Address</label>
+                        <input type="text" id="address" name="address" autocomplete="street-address" placeholder="Wurzbach">
+                    </div>
+
+                    <div class="field-group">
+                        <label>🏙️ City</label>
+                        <input type="text" id="city" name="city" autocomplete="address-level2" placeholder="San Antonio">
+                    </div>
+
+                    <div class="field-group">
+                        <label>🗺️ State</label>
+                        <input type="text" id="state" name="state" autocomplete="address-level1" placeholder="TX">
+                    </div>
+
+                    <div class="field-group">
+                        <label>🏡 Home/Apartment</label>
+                        <input type="text" id="home" name="home" autocomplete="address-line2" placeholder="6400">
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="copyToClipboard()">📋 Copy All</button>
+                    <button type="submit" class="btn btn-success">💾 Lưu vào Chrome Autofill</button>
+                </div>
+            </form>
+
+            <div id="status" class="status"></div>
+        </div>
+
+        <!-- Chrome Instructions -->
+        <div class="chrome-hint">
+            <strong>🔐 Cách Chrome Autofill hoạt động:</strong>
+            <ol>
+                <li>Điền đầy đủ thông tin vào form trên (hoặc click data mẫu)</li>
+                <li>Nhấn <strong>"Lưu vào Chrome Autofill"</strong></li>
+                <li>Chrome sẽ hiện popup <strong>"Lưu địa chỉ?"</strong> ở góc phải</li>
+                <li>Chọn <strong>"Lưu"</strong> để lưu vào Chrome Autofill</li>
+                <li>Lần sau Chrome sẽ tự động điền khi gặp form tương tự</li>
+            </ol>
+            <br>
+            <strong>⚠️ Lưu ý quan trọng:</strong>
+            <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>Chrome chỉ đề xuất lưu khi form có <code>method="POST"</code></li>
+                <li>Website phải chạy qua <strong>server</strong> (không phải file local)</li>
+                <li>Autofill phải được bật: Chrome Settings → Autofill → Addresses</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Fill sample data
+        function fillSample() {
+            const sample = "rmgarcia41815@gmail.com	2109009290	rossanna	valdez	25/03/1979	78240	6400 Wurzbach	San Antonio	TX";
+            document.getElementById('pasteArea').value = sample;
+            parseData();
+        }
+
+        // Parse DOB string into day, month, year
+        function parseDOB(dobStr) {
+            const cleaned = dobStr.trim();
+            let day = '', month = '', year = '';
+
+            // Try DD/MM/YYYY or DD-MM-YYYY
+            let parts = cleaned.split(/[\/\-\.]/);
+            if (parts.length === 3) {
+                if (parts[2].length === 4) {
+                    // DD/MM/YYYY
+                    day = parts[0].padStart(2, '0');
+                    month = parts[1].padStart(2, '0');
+                    year = parts[2];
+                } else if (parts[0].length === 4) {
+                    // YYYY/MM/DD
+                    year = parts[0];
+                    month = parts[1].padStart(2, '0');
+                    day = parts[2].padStart(2, '0');
+                } else {
+                    // MM/DD/YY or other format - try to detect
+                    day = parts[0].padStart(2, '0');
+                    month = parts[1].padStart(2, '0');
+                    year = parts[2].length === 2 ? '19' + parts[2] : parts[2];
+                }
+            }
+
+            // Try MM-DD-YYYY
+            parts = cleaned.split(/[\-]/);
+            if (parts.length === 3 && !day) {
+                month = parts[0].padStart(2, '0');
+                day = parts[1].padStart(2, '0');
+                year = parts[2];
+            }
+
+            return { day, month, year };
+        }
+
+        // Parse data from paste
+        function parseData() {
+            const pasteText = document.getElementById('pasteArea').value.trim();
+            if (!pasteText) {
+                showStatus('Vui lòng paste data trước!', 'info');
+                return;
+            }
+
+            let values = [];
+
+            // Detect separator
+            if (pasteText.includes('\t')) {
+                values = pasteText.split('\t');
+            } else if (pasteText.includes('\t')) {
+                values = pasteText.split('\t');
+            } else if (pasteText.includes(',')) {
+                values = pasteText.split(',').map(v => v.trim());
+            } else {
+                values = smartSplit(pasteText);
+            }
+
+            values = values.map(v => v.trim()).filter(v => v);
+
+            // Map fields - now DOB is index 4, will be split into 3 inputs
+            const fieldMap = {
+                0: 'email',
+                1: 'cell_phone', 
+                2: 'first_name',
+                3: 'last_name',
+                4: 'dob',      // Will be split into month/day/year
+                5: 'zip',
+                6: 'address',
+                7: 'city',
+                8: 'state'
+            };
+
+            // Fill fields
+            Object.entries(fieldMap).forEach(([index, fieldId]) => {
+                if (fieldId === 'dob') {
+                    // Handle DOB - split into 3 inputs
+                    const dobValue = values[index];
+                    if (dobValue) {
+                        const { day, month, year } = parseDOB(dobValue);
+                        if (month) {
+                            document.getElementById('month').value = month;
+                            document.getElementById('month').classList.add('filled');
+                        }
+                        if (day) {
+                            document.getElementById('day').value = day;
+                            document.getElementById('day').classList.add('filled');
+                        }
+                        if (year) {
+                            document.getElementById('year').value = year;
+                            document.getElementById('year').classList.add('filled');
+                        }
+                    }
+                } else {
+                    const input = document.getElementById(fieldId);
+                    if (input && values[index]) {
+                        let value = values[index];
+
+                        // Handle combined zip+home (e.g., "78240 6400")
+                        if (fieldId === 'zip' && value.includes(' ')) {
+                            const parts = value.split(' ');
+                            input.value = parts[0];
+                            const homeInput = document.getElementById('home');
+                            if (homeInput && !homeInput.value && parts[1]) {
+                                homeInput.value = parts[1];
+                                homeInput.classList.add('filled');
+                            }
+                        } else {
+                            input.value = value;
+                        }
+
+                        input.classList.add('filled');
+                    }
+                }
+            });
+
+            showPreview(values);
+            showStatus('✅ Đã tự động điền ' + values.length + ' trường! Nhấn "Lưu vào Chrome Autofill" để lưu.', 'success');
+        }
+
+        // Smart split for space-separated
+        function smartSplit(text) {
+            const parts = text.split(/\s+/);
+
+            if (parts.length >= 9) {
+                const emailIdx = parts.findIndex(p => p.includes('@'));
+                const phoneIdx = parts.findIndex(p => /^\d{10,}$/.test(p));
+
+                if (emailIdx !== -1 && phoneIdx !== -1) {
+                    const result = [];
+                    result.push(parts[emailIdx]);
+                    result.push(parts[phoneIdx]);
+
+                    const remaining = parts.filter((_, i) => i !== emailIdx && i !== phoneIdx);
+                    const dateIdx = remaining.findIndex(p => /\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4}/.test(p));
+
+                    if (dateIdx !== -1) {
+                        result.push(remaining[dateIdx - 2] || '');
+                        result.push(remaining[dateIdx - 1] || '');
+                        result.push(remaining[dateIdx]);
+
+                        const zipPart = remaining[dateIdx + 1] || '';
+                        const homePart = remaining[dateIdx + 2] || '';
+                        result.push(zipPart + (homePart ? ' ' + homePart : ''));
+
+                        result.push(remaining[dateIdx + 3] || '');
+                        result.push(remaining[dateIdx + 4] || '');
+                        result.push(remaining[dateIdx + 5] || '');
+                    }
+
+                    return result;
+                }
+            }
+
+            return parts;
+        }
+
+        // Show preview
+        function showPreview(values) {
+            const card = document.getElementById('previewCard');
+            const tbody = document.getElementById('previewBody');
+
+            let html = '<tr>';
+            for (let i = 0; i < 9; i++) {
+                html += `<td>${values[i] || '-'}</td>`;
+            }
+            html += '</tr>';
+
+            tbody.innerHTML = html;
+            card.style.display = 'block';
+        }
+
+        // Clear all
+        function clearAll() {
+            document.getElementById('pasteArea').value = '';
+            document.querySelectorAll('input').forEach(input => {
+                input.value = '';
+                input.classList.remove('filled');
+            });
+            document.getElementById('previewCard').style.display = 'none';
+            document.getElementById('status').classList.remove('show');
+        }
+
+        // Copy to clipboard
+        function copyToClipboard() {
+            const fields = ['email', 'cell_phone', 'first_name', 'last_name', 'month', 'day', 'year', 'zip', 'address', 'city', 'state', 'home'];
+            const values = fields.map(f => document.getElementById(f)?.value || '');
+            const text = values.join('\t');
+
+            navigator.clipboard.writeText(text).then(() => {
+                showStatus('📋 Đã copy tất cả fields!', 'success');
+            });
+        }
+
+        // Show status
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.innerHTML = message;
+            status.className = 'status show status-' + type;
+
+            setTimeout(() => status.classList.remove('show'), 5000);
+        }
+
+        // Handle form submit
+        document.getElementById('mainForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            showStatus('💾 Đã lưu! Chrome sẽ đề xuất lưu Autofill. Kiểm tra popup ở góc phải.', 'success');
+        });
+
+        // Auto-parse on paste
+        document.getElementById('pasteArea').addEventListener('paste', function() {
+            setTimeout(parseData, 100);
+        });
+    </script>
+</body>
+</html>
